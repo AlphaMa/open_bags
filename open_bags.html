@@ -1,0 +1,341 @@
+<html>
+<head>
+<style type="text/css">
+span.H{color:#00CC33}
+span.b{color:#993399}
+span.j{color:#009999}
+span.bh{color:#996633}
+span.red{color:#ff0000}
+a.visit:visited {color: #000066}
+a.visit:link {color: #000066}
+a.visit:hover {background: #F0F8FF}
+</style>
+<script type="text/javascript">
+
+function open_analog(){
+
+
+	var gameVersion = parseInt(document.getElementById('select_gameVersion').value)
+	switch(gameVersion)
+	{
+		case 0://加基森
+			var whiteNum = 49
+			var blueNum = 36
+			var purpleNum = 27
+			var orangeNum = 20
+			break;
+		case 1://基础系列
+			var whiteNum = 94
+			var blueNum = 81
+			var purpleNum = 38
+			var orangeNum = 36
+			break;		
+		case 2://古神的低语
+			var whiteNum = 50
+			var blueNum = 36
+			var purpleNum = 27
+			var orangeNum = 21
+			break;
+		case 3://冠军的试炼
+			var whiteNum = 49
+			var blueNum = 36
+			var purpleNum = 27
+			var orangeNum = 20
+			break;
+		default:
+	}
+
+
+	var openBagsNum = parseInt(document.getElementById('openBagsNum').value)
+	if(openBagsNum < 1){
+		alert("开包数量需要大于0")
+		return
+	}
+	
+	var cardArray = new Array()
+
+	var whiteSum = 0
+	var blueSum = 0
+	var purpleSum = 0
+	var orangeSum = 0
+
+	var goldenWhiteSum = 0
+	var goldenBlueSum = 0
+	var goldenPurpleSum = 0
+	var goldenOrangeSum = 0
+
+	dustSum = 0
+	whiteFlagNum = 0 //用来标记一包前4张是否都为白卡
+	orangeFlagNum = 0 //用来标记每40包是否无橙卡
+
+	/*概率按照
+	普通（白卡）：70%	70
+	稀有（蓝卡）：21.4%	21.4
+	史诗（紫卡）：4.28%	4.28
+	传说（橙卡）：1.08%	1.08
+	金色普通（白卡）：70%	1.47
+	金色稀有（蓝卡）：21.4%	1.37
+	金色史诗（紫卡）：4.28%	0.308
+	金色传说（橙卡）：1.08%	0.111  
+							100.019 
+	*/
+
+	for (var i=1; i<=openBagsNum*5; i++){
+		
+		var r = Math.random()*100.019
+		if (i%5 == 0 && whiteFlagNum == 4){
+			r = 75 	//如一包中前四次都为白卡，则第五次强制为蓝卡
+		}
+		if (i%200 == 0 && orangeFlagNum == 0){
+			r = 96 	//如每40包无一橙卡，则第200张卡强制为橙卡
+		}
+		
+			
+		if (r <= 70){
+			var randWhiteNum = Math.floor(Math.random()*whiteNum) + 1
+			var card = "w" + randWhiteNum
+			whiteFlagNum ++
+			if (containsCount(cardArray, card) < 2){
+				cardArray.push(card)
+				whiteSum ++
+			}
+			else{
+				dustSum += 5		
+			}
+		}
+		
+		else if (70 < r && r <= 91.4){
+			var randBlueNum = Math.floor(Math.random()*blueNum) + 1
+			var card = "b" + randBlueNum
+
+			if (containsCount(cardArray, card) < 2){
+				cardArray.push(card)
+				blueSum ++		
+			}
+			else{
+				dustSum += 20
+			}
+		
+		}
+		
+		else if (91.4 < r && r <= 95.68){
+			var randPurpleNum = Math.floor(Math.random()*purpleNum) + 1
+			var card = "p" + randPurpleNum
+			if (containsCount(cardArray, card) < 2){
+				cardArray.push(card)
+				purpleSum ++
+			}
+			else{
+				dustSum += 100
+			}
+		
+		}
+		else if (95.68 < r && r <= 96.76){
+			var randOrangeNum = Math.floor(Math.random()*orangeNum) + 1           
+			var card = "o" + randOrangeNum
+			orangeFlagNum ++
+			if (!contains(cardArray, card)){
+				cardArray.push(card)
+				orangeSum ++
+			}
+			else{
+				dustSum += 400
+			}
+		}
+		
+		else if (96.76 < r && r <= 98.23){
+			var randGoldenWhiteNum = Math.floor(Math.random()*whiteNum) + 1
+			var card = "gw" + randGoldenWhiteNum
+			whiteFlagNum ++
+			if (containsCount(cardArray, card) < 2){
+				cardArray.push(card)
+				goldenWhiteSum ++
+			}
+			else{
+				dustSum += 50
+			}
+		
+		}
+				
+		else if (98.23 < r && r <= 99.6){
+			var randGoldenBlueNum = Math.floor(Math.random()*blueNum) + 1
+			var card = "gb" + randGoldenBlueNum
+			if (containsCount(cardArray, card) < 2){
+				cardArray.push(card)
+				goldenBlueSum ++
+			}
+			else{
+				dustSum += 100
+			}
+		}
+		
+		else if (99.6 < r && r <= 99.908){
+			var randGoldenPurpleNum = Math.floor(Math.random()*purpleNum) + 1
+			var card = "gp" + randGoldenPurpleNum
+			if (containsCount(cardArray, card) < 2){
+				cardArray.push(card)
+				goldenPurpleSum ++
+			}
+			else{
+				dustSum += 400
+			}
+		}
+						
+		else{
+			var randGoldenOrangeNum = Math.floor(Math.random()*orangeNum) + 1
+			var card = "go" + randGoldenOrangeNum
+			orangeFlagNum ++
+			if (!contains(cardArray, card)){
+				cardArray.push(card)
+				goldenOrangeSum ++
+			}
+			else{
+				dustSum += 1600
+			}
+		}
+		
+		if (i%5 == 0){
+			whiteFlagNum = 0	//重置白卡计数
+		}
+		if (i%200 == 0){
+			orangeFlagNum = 0	//重置橙卡计数
+		}
+	}
+		
+		
+	document.getElementById('gainWhiteCard').value = whiteSum + " / " + whiteNum*2
+	document.getElementById('gainBlueCard').value = blueSum + " / " + blueNum*2
+ 	document.getElementById('gainPurpleCard').value = purpleSum + " / " + purpleNum*2
+	document.getElementById('gainOrangeCard').value = orangeSum + " / " + orangeNum
+	document.getElementById('gainGoldenWhiteCard').value = goldenWhiteSum + " / " + whiteNum*2
+	document.getElementById('gainGoldenBlueCard').value = goldenBlueSum + " / " + blueNum*2
+	document.getElementById('gainGoldenPurpleCard').value = goldenPurpleSum + " / " + purpleNum*2
+	document.getElementById('gainGoldenOrangeCard').value = goldenOrangeSum + " / " + orangeNum
+	document.getElementById('gainDustNum').value = dustSum
+
+}
+
+
+//是否包含某元素
+function contains(array, obj) { 
+  var i = array.length; 
+  while (i--) { 
+    if (array[i] === obj) { 
+      return true
+    }
+  }
+  return false; 
+}
+
+//包含元素计数
+function containsCount(array, obj) { 
+  var sum = 0
+  for (var i=0; i<array.length; i++){
+	if (array[i] === obj){
+		sum ++
+	}
+  }
+  return sum
+}
+
+//错位排列相关
+//-----
+//全错位排列f(n)=f(n-2)+f(n-1)
+function calcFullArrange(count){
+	if(count == 1){
+		return 0
+	}else if(count == 2){
+		return 1
+	}else if(count == 3){
+		return 2
+	}else if(count <= 0){
+		alert("错误!")
+		return 0
+	}else{
+		return (count - 1) * (calcFullArrange(count - 1) + calcFullArrange(count - 2))
+	}
+}
+//排列数
+function calcArrangement(total, num){
+	num = getInt(num)
+	if(num < 0){
+		num = 0
+	}
+	total = getInt(total)
+	var ret = calcFactorial(total)/(calcFactorial(total - num))
+	return getInt(ret)	
+}
+//组合数
+function calcCombination(total, num){
+	num = getInt(num)
+	if(num < 0){
+		num = 0
+	}
+	total = getInt(total)
+	var ret = calcFactorial(total)/(calcFactorial(total - num)*calcFactorial(num))
+	return getInt(ret)
+}
+function C(total, num){
+	return calcCombination(total, num)	
+}
+function A(total, num){
+	return calcArrangement(total, num)	
+}
+//算阶乘..小于1全算1
+function calcFactorial(num){
+	num = getInt(num)
+	if(num <= 1){
+		return 1;
+	}else{
+		return getInt(num * calcFactorial(num - 1))
+	}
+}
+function getDoubleFloat(num){
+	return Math.round(num * 100000000)/100000000
+}
+function getPercent(num){
+	return Math.round(num * 10000)/100
+}
+function getFloat(num){
+	return Math.round(num * 100)/100
+}
+function getInt(num){
+	return Math.round(num)
+}
+function getFix(num){
+	return Math.floor(num)
+}
+</script>
+</head>
+
+<body>
+
+<form>
+<h1>开包模拟器</h1>
+请选择开包的种类<select id="select_gameVersion">
+  <option value=0 selected="selected">龙争虎斗加基森</option>
+  <option value=1>基础系列</option>
+  <option value=2>古神的低语</option>
+  <option value=3>冠军的试炼</option>
+</select><br />
+<br/>
+请输入开包数量：<input type="text" value=60 id="openBagsNum" /> <br />
+<br/>
+获得白卡：<input type="text" value=0 id="gainWhiteCard" />  <br />   
+获得蓝卡：<input type="text" value=0 id="gainBlueCard" />  <br />
+获得紫卡：<input type="text" value=0 id="gainPurpleCard" />  <br />
+获得橙卡：<input type="text" value=0 id="gainOrangeCard" />  <br />
+获得金色白卡： <input type="text" value=0 id="gainGoldenWhiteCard" />  <br />
+获得金色蓝卡： <input type="text" value=0 id="gainGoldenBlueCard" />  <br />
+获得金色紫卡： <input type="text" value=0 id="gainGoldenPurpleCard" />  <br />
+获得金色橙卡： <input type="text" value=0 id="gainGoldenOrangeCard" />  <br />
+分解重复卡牌获得尘土总计：<input type="text" value=0 id="gainDustNum" /><br />
+
+
+<p>PS:根据网上开包概率模拟，仅供参考！</p>
+<input type="button" value="开包模拟" onClick="open_analog()" id="btn_open_analog" /><br />
+</form>
+
+</body>
+
+</html>
